@@ -2,7 +2,8 @@ const videoContainer = document.querySelector("#videoContainer");
 const form = document.querySelector("#commentForm");
 let videoComments = document.querySelector(".video__comments ul");
 let targetComments = videoComments.querySelectorAll("li");
-let newComment;
+const deleteBtn = document.querySelectorAll(".delete__comment");
+
 const addComment = (text, id) => {
   newComment = document.createElement("li");
   newComment.dataset.id = id;
@@ -18,6 +19,7 @@ const addComment = (text, id) => {
   newComment.appendChild(span);
   newComment.appendChild(span2);
   videoComments.prepend(newComment);
+  span2.addEventListener("click", handleDelete);
   //   newComment.addEventListener("click", console.log("alal"));
 };
 
@@ -50,35 +52,25 @@ if (form) {
   form.addEventListener("submit", handleSubmit);
 }
 
-const handleDelete = async (target) => {
-  console.log("hi");
-  const commentId = target.path[1].dataset.id;
-  const response = await fetch(`/api/comments/${commentId}`, {
+const handleDelete = async (event) => {
+  const commentList = event.target.parentNode;
+  const commentId = commentList.dataset.id;
+  const response = await fetch(`/api/comments/${commentId}/delete`, {
     method: "post",
   });
   if (response.status === 200) {
-    target.path[2].removeChild(target.path[1]);
+    videoComments.removeChild(commentList);
   }
 
   console.log(response.status);
 };
 
-if (targetComments) {
-  targetComments.forEach((targetComment) => {
-    const deleteComment = targetComment.querySelector(".delete__comment");
-    deleteComment.addEventListener("click", handleDelete);
-  });
+// if (targetComments) {
+//   targetComments.forEach((targetComment) => {
+//
+//     deleteComment.addEventListener("click", handleDelete);
+//   });
+// }
+for (let i = 0; i < deleteBtn.length; i++) {
+  deleteBtn[i].addEventListener("click", handleDelete);
 }
-
-let observer = new MutationObserver((mutations) => {
-  // 노드가 변경 됐을 때의 작업
-  const deleteComment2 = newComment.querySelector(".delete__comment");
-  console.log(newComment);
-  deleteComment2.addEventListener("click", handleDelete);
-});
-let option = {
-  attributes: true,
-  childList: true,
-  characterData: true,
-};
-observer.observe(videoComments, option);

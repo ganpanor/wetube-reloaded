@@ -161,13 +161,16 @@ export const deleteComment = async (req, res) => {
   // const video = await Video.findById(id);
 
   const { id } = req.params;
+  console.log(req.params);
   const {
     user: { _id },
   } = req.session;
+  console.log(_id);
   const comment = await Comment.findById(id);
+  console.log(comment);
   const video = await Video.findById(comment.video);
-
   console.log(video);
+
   if (!Comment) {
     return res.status(404).render("404", { pageTitle: "Comment not found." });
   }
